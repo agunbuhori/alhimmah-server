@@ -1,0 +1,62 @@
+.courses {
+    padding: 50px 0;
+}
+
+.feature {
+    background-color: white;
+    padding: 20px;
+    height: 300px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+.section_title {
+    margin-bottom: 50px;
+}
+.feature .icon i {
+    font-size: 70px;
+}
+
+.kelas {
+    margin-top: 100px;
+    padding: 50px 0;
+}
+
+.class {
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.class__img {
+    height: 300px;
+    overflow: hidden;
+}
+
+.class__detail, .class__footer {
+    padding: 20px;
+    height: auto;
+}
+
+.class__detail {
+    height: 150px;
+}
+.class__footer {
+    text-align: center;
+}
+/* 
+.class__footer a {
+    padding: 10px 15px;
+    border-radius: 5px;
+    display: block;
+    color: #666;
+    border: 2px solid #ddd;
+    text-align: center;
+    transition: 300ms;
+} */
+
+.class__footer a:hover {
+    border-color: #333;
+    color: #333;
+}

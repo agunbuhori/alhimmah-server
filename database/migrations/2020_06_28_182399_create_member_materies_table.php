@@ -19,6 +19,7 @@ class CreateMemberMateriesTable extends Migration
             
             $table->dateTime('quiz_enabled')->nullable();
             $table->dateTime('quiz_started')->nullable();
+            $table->smallInteger('quiz_duration')->nullable();
             $table->tinyInteger('quiz_paused')->nullable();
             $table->tinyInteger('quiz_ended')->nullable();
 

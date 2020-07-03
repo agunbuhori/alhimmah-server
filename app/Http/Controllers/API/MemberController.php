@@ -371,8 +371,8 @@ class MemberController extends Controller
         ->addSelect(DB::raw('SUBSTRING(name, 1, 3) AS name'))
         ->addSelect(DB::raw('IF(member_profiles.user_id = '.$user->id.', 1, 0) as is_you'))
         ->where('point', '>', 0)
-        ->orderBy('point')
-        ->orderBy('exp')
+        ->orderBy('point', 'DESC')
+        ->orderBy('exp', 'DESC')
         ->limit(100)
         ->get();
 

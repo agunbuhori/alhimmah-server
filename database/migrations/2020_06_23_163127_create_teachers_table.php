@@ -16,8 +16,8 @@ class CreateTeachersTable extends Migration
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('front_gelar')->nullable();
-            $table->string('back_gelar')->nullable();
+            $table->string('front_degree')->nullable();
+            $table->string('back_degree')->nullable();
             $table->enum('gender', ['male', 'female'])->nullable();
             $table->date('birthday')->nullable();
             $table->text('description')->nullable();

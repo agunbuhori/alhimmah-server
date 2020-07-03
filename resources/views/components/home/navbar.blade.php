@@ -33,7 +33,7 @@
                     <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                         <div class="log_chat_area d-flex align-items-center">
                             @if (! auth()->check())
-                            <a href="/login" class="login">
+                            <a href="https://m.madinah.id" class="login">
                                 <i class="fa fa-user"></i>
                                 <span>@lang('Masuk')</span>
                             </a>

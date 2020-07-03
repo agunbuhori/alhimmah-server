@@ -18,8 +18,8 @@ class ClassroomController extends Controller
     public function index()
     {
         $userId = auth()->user()->id;
-        $classrooms = Classroom::with('courses')->withCount('classroom_members')->where('user_id', $userId)->paginate(20);
-        $publishedClasrooms = Classroom::where('published', 1)->where('user_id', $userId)->count();
+        $classrooms = Classroom::with('courses')->withCount('classroom_members')->paginate(20);
+        $publishedClasrooms = Classroom::where('published', 1)->count();
         $publishedCourses = Course::count();
         $totalMembers = MemberProfile::count();
         $joinedMembers = ClassroomMember::groupBy('user_id')->count();

@@ -21,4 +21,9 @@ class Classroom extends Model
     {
         $this->attributes['description'] = htmlspecialchars($value);
     }
+
+    public function getDescriptionAttribute($value)
+    {
+        return htmlspecialchars_decode($value);
+    }
 }

@@ -21,11 +21,13 @@ class CreateMemberMateriesTable extends Migration
             $table->dateTime('quiz_started')->nullable();
             $table->tinyInteger('quiz_paused')->nullable();
             $table->tinyInteger('quiz_ended')->nullable();
-            $table->text('quiz_answers')->nullable();
+
+            $table->text('quiz_questions', 100)->nullable();
+            $table->text('quiz_answers', 100)->nullable();
+            $table->text('quiz_corrections', 100)->nullable();
 
             $table->decimal('quiz_score', 5, 2)->nullable();
-            $table->enum('status', ['read', 'repeat', 'success']);
-            $table->tinyInteger('reading_times')->default(0);
+            $table->smallInteger('reading_times')->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

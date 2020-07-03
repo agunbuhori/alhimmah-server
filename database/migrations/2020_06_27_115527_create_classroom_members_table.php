@@ -17,6 +17,8 @@ class CreateClassroomMembersTable extends Migration
             $table->unsignedBigInteger('classroom_id');
             $table->unsignedBigInteger('user_id');
             $table->tinyInteger('graduated')->default(0);
+            $table->smallInteger('point')->default(0);
+            $table->decimal('exp', 5, 2)->default(0);
             $table->timestamps();
 
             $table->foreign('classroom_id')->references('id')->on('classrooms')->onDelete('cascade');

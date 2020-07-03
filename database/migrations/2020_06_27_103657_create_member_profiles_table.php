@@ -23,7 +23,7 @@ class CreateMemberProfilesTable extends Migration
             $table->date('birthday')->nullable();
             $table->char('address_code', 12)->nullable();
             $table->char('whatsapp', 16)->nullable();
-            $table->text('adress')->nullable();
+            $table->text('address')->nullable();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

@@ -11,7 +11,7 @@ $factory->define(Quiz::class, function (Faker $faker) {
         'answer' => json_encode([
             $faker->sentence(rand(1, 5)), $faker->sentence(rand(1, 5)), $faker->sentence(rand(1, 5)), $faker->sentence(rand(1, 5))
         ]),
-        'correct_answer' => rand(0, 3),
+        'correct_answer' => 0,
         'parent' => 'materies',
         'parent_id' => rand(1, 5)
     ];

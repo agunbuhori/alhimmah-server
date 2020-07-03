@@ -33,6 +33,13 @@ Route::group(['namespace' => 'API', 'middleware' => 'auth:api'], function () {
     Route::put('/start_quiz/{id}', 'MemberController@startQuiz');
     Route::post('/answer/{id}', 'MemberController@answer');
     Route::put('/update_profile', 'MemberController@updateProfile');
+    Route::get('/ranks', 'MemberController@ranks');
+
+    Route::post('/register_classroom', 'MemberController@registerClassroom');
+
+    Route::get('/countries', function () {
+        return DB::table('countries')->get();
+    });
 
     Route::get('/provinces', function () {
         return DB::table('wilayah')->whereRaw('LENGTH(kode) = 2')->get();

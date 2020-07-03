@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Classroom;
+use App\ClassroomMember;
 use App\Course;
 use App\Http\Controllers\Controller;
 use App\Matery;
@@ -20,9 +21,22 @@ class MemberController extends Controller
     {
         $user = $request->user();
         $user->profile = $user->member_profile;
+        
+        $domicilie = "";
 
-        $domicilie = DB::table('wilayah')->where('kode', $user->profile->address_code)->first();
-        $user->profile->domicilie = $domicilie ? $domicilie->nama : "";
+        if (preg_match('/^[0-9\.]+$/', $user->profile->address_code)) {
+            $domicilie = DB::table('wilayah')->where('kode', $user->profile->address_code)->first()->nama;
+        } else if (preg_match('/^[A-Z]+$/', $user->profile->address_code)) {
+            $domicilie = DB::table('countries')->where('country_code', $user->profile->address_code)->first()->country_name;
+        }
+
+        $user->profile->domicilie = $domicilie;
+
+        if ($request->with_classroom)
+            $user->classroom = ClassroomMember::where(['classroom_members.user_id' => $user->id, 'graduated' => 0])
+            ->select('classrooms.name')
+            ->join('classrooms', 'classrooms.id', '=', 'classroom_members.classroom_id')
+            ->first();
         
         return $user;
     }
@@ -39,7 +53,7 @@ class MemberController extends Controller
         ];
 
         if (! $member_profile->member_id && $request->name && $request->gender && $request->birthday) {
-            $count = MemberProfile::where('member_id', 'like', ($request->gender === 'male' ? '1' : '2').date('Y-m').'%')->count();
+            $count = MemberProfile::where('member_id', 'like', ($request->gender == 'male' ? '1' : '2').date('ym').'%')->count();
             $member_id = ($request->gender === 'male' ? '1' : '2').date('ym').sprintf("%04d", $count+1);
             $update['name'] = $request->name;
             $update['gender'] = $request->gender;
@@ -60,12 +74,17 @@ class MemberController extends Controller
     {
         $user = $request->user();
 
-        $classrooms = Classroom::join('classroom_members', 'classrooms.id', '=', 'classroom_members.classroom_id')
-        ->where(['classroom_members.user_id' => $user->id, 'published' => 1])
+        $classrooms = Classroom::where('published', 1)
         ->withCount('courses')
+        ->with('courses')
         ->get();
 
-        return $classrooms;
+        $classroom_member = ClassroomMember::where(['classroom_members.user_id' => $user->id, 'graduated' => 0])
+        ->select('classrooms.id')
+        ->join('classrooms', 'classrooms.id', '=', 'classroom_members.classroom_id')
+        ->first();
+
+        return compact('classrooms', 'classroom_member');
     }
 
     /**
@@ -111,7 +130,6 @@ class MemberController extends Controller
             return $matery->whereHas('quizzes');
         })
         ->with('matery.course')
-        ->orderBy('created_at', 'DESC')
         ->when($request->ended, function ($query) use ($request) {
             if ($request->ended == 'true')
             return $query->whereNotNull('quiz_ended');
@@ -152,6 +170,17 @@ class MemberController extends Controller
         return $course;
     }
 
+    private function getMatery($id, $user)
+    {
+        return Matery::whereHas('course', function ($course) use ($user) {
+            return $course->join('classroom_members', 'classroom_members.classroom_id', '=', 'courses.classroom_id')
+            ->where('classroom_members.user_id', $user->id);
+        })
+        ->with('course')
+        ->where('id', $id)
+        ->firstOrFail();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -160,25 +189,20 @@ class MemberController extends Controller
     public function stream(Request $request, $id)
     {
         $id = decrypt($id);
-        $user = $request->user();
+        $user = $request->user();        
 
-        $check = MemberMatery::where('user_id', $user->id)
-        ->whereDate('created_at', today())
-        ->where('matery_id', '!=', $id)
-        ->count();
+        $member_matery = MemberMatery::where(['user_id' => $user->id, 'matery_id' => $id])->count();
+        
+        if ($member_matery) {
+            return $this->getMatery($id, $user);
+        } else {
+            $check = MemberMatery::where('user_id', $user->id)->whereDate('created_at', today())->count();
 
-        if ($check === 2)
-            return ['limited' => true];
-
-        $matery = Matery::whereHas('course', function ($course) use ($user) {
-            return $course->join('classroom_members', 'classroom_members.classroom_id', '=', 'courses.classroom_id')
-            ->where('classroom_members.user_id', $user->id);
-        })
-        ->with('course')
-        ->where('id', $id)
-        ->firstOrFail();
-
-        return $matery;
+            if ($check > 1)
+                return ['limited' => true];
+            else
+                return $this->getMatery($id, $user);
+        }
     }
 
     /**
@@ -191,14 +215,9 @@ class MemberController extends Controller
         $id = decrypt($id);
         $user = $request->user();
 
-        $check = MemberMatery::where('user_id', $user->id)
-        ->whereDate('created_at', today())
-        ->count();
-
-        if ($check === 2)
-            return false;
-
         $check = MemberMatery::where(['user_id' => $user->id, 'matery_id' => $id]);
+        ClassroomMember::where(['user_id' => $user->id, 'graduated' => 0])->update(['point' => DB::raw('point+1')]);
+
 
         if (! $check->count()) {
 
@@ -208,7 +227,6 @@ class MemberController extends Controller
             $member_matery = new MemberMatery;
             $member_matery->user_id = $user->id;
             $member_matery->matery_id = $id;
-            $member_matery->status = 'read';
             $member_matery->quiz_questions = json_encode($quizzes);
             $member_matery->quiz_duration = $duration->duration;
             $member_matery->quiz_paused = $duration->duration;
@@ -221,6 +239,7 @@ class MemberController extends Controller
             $check->update(['reading_times' => DB::raw('reading_times+1')]);
             $member_matery = $check->first();
         }
+
 
         return $member_matery;
     }
@@ -304,6 +323,7 @@ class MemberController extends Controller
         if ($request->end) {
             $update['quiz_ended'] = $request->duration;
             $update['quiz_score'] = $this->correction($request->answers);
+            ClassroomMember::where(['user_id' => $user->id, 'graduated' => 0])->update(['exp' => DB::raw('exp+'.$update['quiz_score'])]);
         }
         
         $member_matery->update($update);
@@ -317,7 +337,7 @@ class MemberController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function correction($answers)
+    private function correction($answers)
     {
         $quizzes = Quiz::whereIn('id', array_keys($answers))->get();
 
@@ -332,5 +352,43 @@ class MemberController extends Controller
         }
 
         return ($score/$maxScore)*100;
+    }
+
+    public function ranks(Request $request)
+    {
+        $user = $request->user();
+
+        $classroom_member = ClassroomMember::where(['user_id' => $user->id, 'graduated' => 0])
+        ->with('classroom')
+        ->first();
+
+        if (! $classroom_member)
+            return ['no_classroom' => true];
+
+        $ranks = ClassroomMember::where('classroom_id', $classroom_member->classroom_id)
+        ->join('member_profiles', 'member_profiles.user_id', '=', 'classroom_members.user_id')
+        ->select('point', 'exp', 'member_id')
+        ->addSelect(DB::raw('SUBSTRING(name, 1, 3) AS name'))
+        ->addSelect(DB::raw('IF(member_profiles.user_id = '.$user->id.', 1, 0) as is_you'))
+        ->where('point', '>', 0)
+        ->orderBy('point')
+        ->orderBy('exp')
+        ->limit(100)
+        ->get();
+
+        return $ranks;
+    }
+
+    public function registerClassroom(Request $request)
+    {
+        $user = $request->user();
+
+        $classroom_member = new ClassroomMember;
+        $classroom_member->user_id = $user->id;
+        $classroom_member->classroom_id = $request->classroom_id;
+        $classroom_member->started = $request->start_date;
+        $classroom_member->save();
+
+        return $classroom_member;
     }
 }

@@ -28,4 +28,9 @@ class Course extends Model
     {
         return $this->belongsTo('App\Teacher');
     }
+
+    public function member_materies()
+    {
+        return $this->hasManyThrough('App\MemberMatery', 'App\Matery')->where('user_id', request()->user()->id);
+    }
 }

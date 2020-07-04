@@ -101,22 +101,17 @@ class MemberController extends Controller
         $user = $request->user();
 
         $classroom = Classroom::join('classroom_members', 'classrooms.id', '=', 'classroom_members.classroom_id')
+        ->select('name', 'started', 'id', 'code')
         ->where(['classroom_members.user_id' => $user->id, 'graduated' => 0])
         ->with('courses.teacher')
-        ->with(['courses' => function ($courses) {
-            return $courses->whereHas('materies')->withCount('materies')->where('published', 1);
+        ->with(['courses' => function ($courses) use ($user) {
+            return $courses->whereHas('materies')->withCount(['materies', 'member_materies']);
         }])
         ->first();
 
         if (! $classroom)
             return ['no_classroom' => true];
-
-        $classroom->courses->each(function ($course) use ($user) {
-            $member_materies = MemberMatery::join('materies', 'materies.id', '=', 'member_materies.matery_id')
-            ->where(['user_id' => $user->id, 'materies.course_id' => $course->id])->count();
-            $course->member_materies_count = $member_materies;
-        });
-
+            
         return $classroom;
     }
 

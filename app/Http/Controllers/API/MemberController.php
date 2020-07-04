@@ -46,6 +46,10 @@ class MemberController extends Controller
         $user = $request->user();
         $member_profile = MemberProfile::where('user_id', $user->id)->first();
 
+        $request->validate([
+            'name' => 'min:3|max:255|regex:/^[a-zA-Z\ \.]+$/'
+        ]);
+
         $update = [
             'address_code' => $request->city_id,
             'address' => $request->address,
@@ -388,6 +392,45 @@ class MemberController extends Controller
         $classroom_member->classroom_id = $request->classroom_id;
         $classroom_member->started = $request->start_date;
         $classroom_member->save();
+
+        return $classroom_member;
+    }
+
+    public function updateUser(Request $request)
+    {
+        $user = $request->user();
+
+        $validator['email'] = 'email|max:255';
+        $validator['name'] = 'min:4|max:255';
+
+        if ($request->password)
+            $validator['password'] = 'min:5|max:64';
+
+        if ($request->email !== $user->email)
+            $validator['email'] .= '|unique:users';
+
+        if ($request->name !== null && $request->name !== $user->name)
+            $validator['name'] .= '|unique:users';
+
+        $request->validate($validator);
+
+
+        $user->name = $request->name;
+        if ($request->password)
+            $user->password = $request->password;
+        if ($request->email && $request->email !== $user->email) {
+            $user->email = $request->email;
+            $user->email_verified_at = null;
+        }
+        $user->save();
+
+        return $user;
+    }
+
+    public function startClass(Request $request)
+    {
+        $user = $request->user();
+        $classroom_member = ClassroomMember::where(['user_id' => $user->id, 'graduated' => 0])->update(['started' => today()]);
 
         return $classroom_member;
     }

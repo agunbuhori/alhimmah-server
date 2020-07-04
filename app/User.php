@@ -55,4 +55,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return Carbon::parse($value)->format('D, d F Y - H:i');
     }
+
+    public function getNameAttribute($value)
+    {
+        return preg_match('/^temp\_[0-9]+$/', $value) ? null : $value;
+    }
 }

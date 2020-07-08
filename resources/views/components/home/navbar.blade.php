@@ -17,7 +17,7 @@
                                 <ul id="navigation">
                                     <li><a {!! request()->is('/') ? 'class="active"' : '' !!} href="/">Beranda</a></li>
                                     <li><a {!! request()->is('kelas') ? 'class="active"' : '' !!} href="/kelas">Kelas</a></li>
-                                    <li><a {!! request()->is('diskusi') ? 'class="active"' : '' !!} href="home/Courses.html">Ruang Diksusi</a></li>
+                                    <!-- <li><a {!! request()->is('diskusi') ? 'class="active"' : '' !!} href="home/Courses.html">Ruang Diksusi</a></li> -->
                                     <!-- <li><a href="home/#">pages <i class="ti-angle-down"></i></a>
                                             <ul class="submenu">
                                                 <li><a href="home/course_details.html">course details</a></li>
@@ -32,28 +32,11 @@
                     </div>
                     <div class="col-xl-3 col-lg-3 d-none d-lg-block">
                         <div class="log_chat_area d-flex align-items-center">
-                            @if (! auth()->check())
-                            <a href="https://m.madinah.id" class="login">
-                                <i class="fa fa-user"></i>
-                                <span>@lang('Masuk')</span>
-                            </a>
-                            <div class="live_chat_btn">
-                                <a class="boxed_btn_orange" href="/register">
-                                    <span>@lang('Daftar Gratis')</span>
+                        <div class="live_chat_btn">
+                                <a class="boxed_btn_orange" href="https://m.madinah.id">
+                                    <span>@lang('Buka Aplikasi')</span>
                                 </a>
                             </div>
-                            @else
-                            <a href="/profile" class="login">
-                                <i class="fa fa-user"></i>
-                                <span>{{ auth()->user()->member_profile->name }}</span>
-                            </a>
-
-                            <a href="/logout" class="login">
-                                <i class="fa fa-sign-out"></i>
-                                <span>@lang('Keluar')</span>
-                            </a>
-
-                            @endif
                         </div>
                     </div>
                     <div class="col-12">

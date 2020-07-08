@@ -11,7 +11,7 @@ class Matery extends Model implements HasMedia
 {
     use SoftDeletes, InteractsWithMedia;
     protected $fillable = ['course_id', 'title', 'video_url', 'duration', 'audio_url', 'article_url', 'article'];
-    protected $hidden = ['id', 'course_id'];
+    protected $hidden = ['course_id'];
 
     public function setArticleAttribute($value)
     {

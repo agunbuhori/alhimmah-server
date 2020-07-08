@@ -68,10 +68,10 @@
             </a>
 
         </div>
-
+<!-- 
         <div class="form-group">
-            <p class="or">@lang('Sudah punya akun? ') <a href="/login">Masuk</a></p>
-        </div>
+            <p class="or">@lang('Sudah punya akun? ') <a href="https://m.madinah.id">Masuk</a></p>
+        </div> -->
     </form>
 </div>
 @endsection

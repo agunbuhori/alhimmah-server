@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Quiz;
+use App\Syahadah;
 use Illuminate\Http\Request;
 
-class QuizController extends Controller
+class SyahadahController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,15 +14,7 @@ class QuizController extends Controller
      */
     public function index()
     {
-        $query = Quiz::with(['matery.course' => function ($course) {
-            return $course->where('classroom_id', request()->classroom_id);
-        }]);
-
-        return datatables()->of($query)->addIndexColumn()
-        ->editColumn('question', function ($quiz) {
-            return strip_tags($quiz->question);
-        })
-        ->toJson();
+        //
     }
 
     /**
@@ -43,26 +35,16 @@ class QuizController extends Controller
      */
     public function store(Request $request)
     {
-        $quiz = new Quiz;
-        $quiz->parent = 'materies';
-        $quiz->parent_id = $request->matery_id;
-        $quiz->correct_answer = $request->correct_answer;
-        $quiz->answer = json_encode($request->answer);
-        $quiz->question = $request->question;
-        $quiz->weekly_quiz = $request->weekly_quiz ?? 0;
-        $quiz->monthly_quiz = $request->monthly_quiz ?? 0;
-        $quiz->save();
-
-        return back();
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Quiz  $quiz
+     * @param  \App\Syahadah  $syahadah
      * @return \Illuminate\Http\Response
      */
-    public function show(Quiz $quiz)
+    public function show(Syahadah $syahadah)
     {
         //
     }
@@ -70,22 +52,22 @@ class QuizController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Quiz  $quiz
+     * @param  \App\Syahadah  $syahadah
      * @return \Illuminate\Http\Response
      */
-    public function edit(Quiz $quiz)
+    public function edit(Syahadah $syahadah)
     {
-        return view('admin.bank.edit', compact('quiz'));
+        //
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Quiz  $quiz
+     * @param  \App\Syahadah  $syahadah
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Quiz $quiz)
+    public function update(Request $request, Syahadah $syahadah)
     {
         //
     }
@@ -93,10 +75,10 @@ class QuizController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Quiz  $quiz
+     * @param  \App\Syahadah  $syahadah
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Quiz $quiz)
+    public function destroy(Syahadah $syahadah)
     {
         //
     }

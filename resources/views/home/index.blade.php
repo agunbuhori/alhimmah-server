@@ -15,19 +15,17 @@
                                 <img src="home/img/testmonial/author_img.png" alt="">
                             </div>
                             <p>
-                                "Working in conjunction with humanitarian aid <br> agencies we have supported
-                                programmes to <br>
-                                alleviate.
-                                human suffering.
+                                "Alhamdulillah kini belajar agama tidak sulit
+                                dengan adanya madinah.id ana bisa belajar agama di rumah apalagi di masa pandemi seperti ini.
 
                             </p>
-                            <span>- Jquileen</span>
+                            <span>- Agun Buhori</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="single_testmoial">
+        <!-- <div class="single_testmoial">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-12">
@@ -47,7 +45,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 <!-- testimonial_area_end -->
@@ -58,9 +56,9 @@
         <div class="row">
             <div class="col-xl-12">
                 <div class="section_title text-center">
-                    <h3>Belajar di Alhimmah</h3>
-                    <p>Your domain control panel is designed for ease-of-use and <br>
-                        allows for all aspects of your domains.
+                    <h3>Belajar di madinah.id</h3>
+                    <p>Berikut adalah beberapa keuntungan yang akan antum dapatkan <br>
+                        jika belajar di madinah.id
                     </p>
                 </div>
             </div>

@@ -9,6 +9,64 @@
 <!-- Basic layout-->
 <div class="row" id="controller">
     <!-- Basic modal -->
+    <form id="modal_quiz" class="modal" method="POST" action="/admin/quiz">
+        @csrf
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Buat Soal : @{{ question.title }}</h3>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" :value="question.id" name="matery_id">
+                    <div class="form-group">
+                        <label for="weekly_quiz">
+                            <input type="checkbox" name="weekly_quiz" id="weekly_quiz" value="1"> Tampilkan Di Ujian Pekan
+                        </label>
+                        &nbsp;
+                        <label for="monthly_quiz">
+                            <input type="checkbox" name="monthly_quiz" id="monthly_quiz" value="1"> Tampilkan Di Ujian Akhir
+                        </label>
+
+                    </div>
+                    <div class="form-group">
+                        <label>Pertanyaan</label>
+                        <textarea id="ckeditor3" name="question" placeholder="Enter text ...">
+                        </textarea>
+                    </div>
+
+                    <div class="form-group row" v-for="(option, $index) in options">
+                        <div class="col-xs-1 text-right">
+                            <input type="radio" name="correct_answer" :value="$index" :checked="$index === 0" required>
+                        </div>
+                        <div class="col-xs-10">
+                            <input type="text" class="form-control" placeholder="Jawaban" v-model="option.question" autocomplete="off" name="answer[]" required>
+                        </div>
+                        <div class="col-xs-1">
+                            <button type="button" class="btn btn-xs btn-warning" @click="options.splice($index, 1)"><i class="icon-cross"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button type="button" class="btn btn-link" @click="options.push({question: '', correct: ''})"><i class="icon-plus3 position-left"></i> Tambah</button>
+                    </div>
+                    
+                </div>
+                
+                <div class="modal-footer">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Batalkan</button>
+                        <button type="submit" class="btn btn-primary">@lang('Simpan')</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <!-- /basic modal -->
+
+    <!-- Basic modal -->
     <form id="modal_default" class="modal" method="POST" :action="editMode ? '/admin/matery/'+matery.id : '/admin/matery'">
         @csrf
         <div v-if="editMode">
@@ -18,7 +76,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h5 class="modal-title">@lang('Tambah Materi') {{ Str::title($course->title) }}</h5>
+                    <h3 v-if="!editMode" class="modal-title">@lang('Tambah Materi') {{ Str::title($course->title) }}</h3>
+                    <h3 v-else class="modal-title">Edit Materi : @{{ matery.title }}</h3>
                 </div>
 
                 <div class="modal-body">
@@ -104,14 +163,14 @@
                         <tr v-for="(matery, $index) in materies">
                             <td>
                                 <div class="media-left media-middle">
-                                    <a href="#" class="btn bg-primary-400 btn-rounded btn-icon btn-xs legitRipple">
+                                    <a @click.prevent="editMatery($index)" href="#" class="btn bg-primary-400 btn-rounded btn-icon btn-xs legitRipple">
                                         <span class="letter-icon">@{{ $index+1 }}</span>
                                     </a>
                                 </div>
 
                                 <div class="media-body">
                                     <div class="media-heading">
-                                        <a href="#" class="h6 text-semibold letter-icon-title">@{{ matery.title }}</a>
+                                        <a @click.prevent="editMatery($index)" href="#" class="h6 text-semibold letter-icon-title">@{{ matery.title }}</a>
                                     </div>
 
                                     <div class="text-success text-size-small">
@@ -119,6 +178,7 @@
                                         <span v-if="matery.audio_url"><i class="icon-volume-high text-size-mini position-left"></i> Audio</span>
                                         <span v-if="matery.article_url"><i class="icon-magazine text-size-mini position-left"></i> Article</span>
                                         <span v-if="matery.article"><i class="icon-magazine text-size-mini position-left"></i> Article</span>
+                                        <span><i class="icon-magazine text-size-mini position-left ml-15"></i> @{{ matery.quizzes_count }} Bank Soal</span>
                                     </div>
 
                                 </div>
@@ -128,13 +188,9 @@
                             </td>
 
                             <td>
-                                <h6 class="text-semibold no-margin"> Soal</h6>
+                                <a href="#" class="h6 text-semibold no-margin" data-toggle="modal" data-target="#modal_quiz" @click="question = matery"><i class="icon-plus3 position-left"></i> Buat Soal</a>
                             </td>
 
-
-                            <td>
-                                <a @click.prevent="editMatery($index)" href="#" class="text-primary"><i class="icon-pencil"></i></a>
-                            </td>
 
                         </tr>
 
@@ -244,6 +300,27 @@
             filebrowserBrowseUrl: '/admin/filemanager?type=Files',
             filebrowserUploadUrl: '/admin/filemanager/upload?type=Files&_token='
         });
+        CKEDITOR.replace('ckeditor3', {
+            height: '200px',
+            filebrowserImageBrowseUrl: '/admin/filemanager?type=Images',
+            filebrowserImageUploadUrl: '/admin/filemanager/upload?type=Images&_token=',
+            filebrowserBrowseUrl: '/admin/filemanager?type=Files',
+            filebrowserUploadUrl: '/admin/filemanager/upload?type=Files&_token=',
+            toolbarGroups: [
+                {
+          "name": "basicstyles",
+          "groups": ["basicstyles"]
+        },
+        {
+          "name": "insert",
+          "groups": ["insert"]
+        },
+        {
+          "name": "styles",
+          "groups": ["styles"]
+        }
+      ],
+        });
         $('#lfm').filemanager('image', {prefix: '/admin/filemanager'});
     });
 
@@ -252,6 +329,10 @@
         data: {
             kind: "video_url",
             matery: {},
+            options: [
+                {"question": ""}
+            ],
+            question: {},
             matery_url: "",
             editMode: false,
             editor: {},

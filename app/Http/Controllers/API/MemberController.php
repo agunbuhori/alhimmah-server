@@ -105,7 +105,8 @@ class MemberController extends Controller
         ->where(['classroom_members.user_id' => $user->id, 'graduated' => 0])
         ->with('courses.teacher')
         ->with(['courses' => function ($courses) use ($user) {
-            return $courses->whereHas('materies')->withCount(['materies', 'member_materies']);
+            return $courses->whereHas('materies')->withCount(['materies', 'member_materies'])
+            ->where('courses.published', 1);
         }])
         ->first();
 
@@ -153,8 +154,9 @@ class MemberController extends Controller
     {
         $user = $request->user();
 
-        $course = Course::with(['materies' => function ($materies) use ($user) {
-            return $materies->withCount(['member_materies' => function ($member_materies) use ($user) {
+        $course = Course::select('title', 'id', 'courses.classroom_id', 'code')->with(['materies' => function ($materies) use ($user) {
+            return $materies->select('title', 'duration', 'course_id', 'materies.id AS id', 'video_url', 'audio_url', 'article_url')
+            ->withCount(['member_materies' => function ($member_materies) use ($user) {
                 return $member_materies->where('user_id', $user->id);
             }]);
         }])
@@ -228,7 +230,7 @@ class MemberController extends Controller
             $member_matery->matery_id = $id;
             $member_matery->quiz_questions = json_encode($quizzes);
             $member_matery->quiz_duration = $duration->duration;
-            $member_matery->quiz_paused = $duration->duration;
+            $member_matery->quiz_paused = $member_matery->quiz_duration;
             $member_matery->quiz_enabled = Carbon::now()->addDays(1);
             $member_matery->reading_times = 1;
             $member_matery->save();
@@ -320,8 +322,10 @@ class MemberController extends Controller
         ];
 
         if ($request->end) {
+            $correction = $this->correction($request->answers);
             $update['quiz_ended'] = $request->duration;
-            $update['quiz_score'] = $this->correction($request->answers);
+            $update['quiz_score'] = $correction['score'];
+            $update['quiz_corrections'] = $correction['corrections'];
             ClassroomMember::where(['user_id' => $user->id, 'graduated' => 0])->update(['exp' => DB::raw('exp+'.$update['quiz_score'])]);
         }
         
@@ -343,14 +347,18 @@ class MemberController extends Controller
         $score = 0;
         $maxScore = 0;
 
+        $corrections = [];
+
         foreach ($quizzes as $quiz) {
             $maxScore += $quiz->weight;
+
+            $corrections[$quiz->id] = $quiz->correct_answer;
 
             if ($answers[$quiz->id] == $quiz->correct_answer)
                 $score += $quiz->weight;
         }
 
-        return ($score/$maxScore)*100;
+        return ['corrections' => $corrections, 'score' => $score ? ($score/$maxScore)*100 : 0];
     }
 
     public function ranks(Request $request)
@@ -370,8 +378,8 @@ class MemberController extends Controller
         ->addSelect(DB::raw('SUBSTRING(name, 1, 3) AS name'))
         ->addSelect(DB::raw('IF(member_profiles.user_id = '.$user->id.', 1, 0) as is_you'))
         ->where('point', '>', 0)
-        ->orderBy('point', 'DESC')
         ->orderBy('exp', 'DESC')
+        ->orderBy('point', 'DESC')
         ->limit(100)
         ->get();
 
@@ -428,5 +436,13 @@ class MemberController extends Controller
         $classroom_member = ClassroomMember::where(['user_id' => $user->id, 'graduated' => 0])->update(['started' => today()]);
 
         return $classroom_member;
+    }
+
+    public function syahadah(Request $request)
+    {
+        $user = $request->user();
+        $syahadahs = ClassroomMember::where(['user_id' => $user->id, 'syahadah_enabled' => 1])->get();
+
+        return $syahadahs;
     }
 }

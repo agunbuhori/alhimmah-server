@@ -29,11 +29,13 @@ Route::group(['middleware' => ['auth', 'role:superadmin'], 'prefix' => 'admin'],
     Route::get('/classroom_member/{id}', 'AdminController@classroomMember');
     Route::get('/media', 'AdminController@mediaManager');
     Route::get('/member', 'AdminController@member');
+    Route::get('/bank', 'AdminController@bank');
     Route::post('/upload', 'AdminController@upload');
 
     Route::resource('classroom', 'ClassroomController');
     Route::resource('course', 'CourseController');
     Route::resource('matery', 'MateryController');
+    Route::resource('quiz', 'QuizController');
     Route::resource('member_profile', 'MemberProfileController');
 
     Route::group(['prefix' => 'data'], function () {

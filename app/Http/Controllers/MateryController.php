@@ -14,7 +14,7 @@ class MateryController extends Controller
      */
     public function index()
     {
-        return Matery::where('course_id', request()->course_id)->get();
+        return Matery::where('course_id', request()->course_id)->withCount('quizzes')->get();
     }
 
     /**

@@ -64,7 +64,7 @@
                                     <th>Nomor ID</th>
                                     <th>Nama</th>
                                     <th>Jenis Kelamin</th>
-                                    <th>Persentase</th>
+                                    <th>Poin</th>
                                     <!-- <th width="120px" class="text-center">Actions</th> -->
                                 </tr>
                             </thead>
@@ -156,7 +156,7 @@
     });
 
     var column_config = [{
-            data: "id_number"
+            data: "member_id"
         },
         {
             render: function(a, b, data) {
@@ -174,9 +174,8 @@
         },
         {
             render: function(a, b, data) {
-                return '25%'
+                return data.point + ' poin, '+ data.exp+' exp'
             },
-            orderable: false,
             searchable: false
         },
     ];

@@ -39,11 +39,11 @@ $user = auth()->user();
 
 					<!-- Main -->
 					<li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
-					<li><a href="/admin"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
-					<li><a href="/admin/classroom"><i class="icon-office"></i> <span>@lang('Manajemen Kelas')</span></a></li>
-					<li><a href="/admin/member"><i class="icon-users"></i> <span>@lang('Manajemen Peserta')</span></a></li>
-					<li><a href="/admin/bank"><i class="icon-bookmark"></i> <span>@lang('Bank Soal')</span></a></li>
-					<li><a href="/admin/media"><i class="icon-folder-search"></i> <span>@lang('Manajemen Media')</span></a></li>
+					<li {!! request()->is('admin') ? 'class="active"' : "" !!}><a href="/admin"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
+					<li {!! request()->is('admin/classroom') ? 'class="active"' : "" !!}><a href="/admin/classroom"><i class="icon-office"></i> <span>@lang('Manajemen Kelas')</span></a></li>
+					<li {!! request()->is('admin/bank') ? 'class="active"' : "" !!}><a href="/admin/bank"><i class="icon-bookmark"></i> <span>@lang('Bank Soal')</span></a></li>
+					<li {!! request()->is('admin/member') ? 'class="active"' : "" !!}><a href="/admin/member"><i class="icon-users"></i> <span>@lang('Manajemen Peserta')</span></a></li>
+					<li {!! request()->is('admin/media') ? 'class="active"' : "" !!}><a href="/admin/media"><i class="icon-folder-search"></i> <span>@lang('Manajemen Media')</span></a></li>
 	
 
 				</ul>

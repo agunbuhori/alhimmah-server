@@ -36,9 +36,8 @@ Route::group(['namespace' => 'API', 'middleware' => 'auth:api'], function () {
     Route::put('/update_user', 'MemberController@updateUser');
     Route::get('/ranks', 'MemberController@ranks');
     Route::post('/start_class', 'MemberController@startClass');
-
     Route::post('/register_classroom', 'MemberController@registerClassroom');
-
+    Route::get('/syahadah', 'MemberController@syahadah');
     Route::get('/countries', function () {
         return DB::table('countries')->get();
     });

@@ -12,15 +12,22 @@
         <div class="form-group">
             <div class="input-container">
                 <input id="email" name="email" class="input" type="text" value="{{ old('name') }}" required />
-                <label class="label" for="email">@lang('Email')</label>
+                <label class="label label-input" for="email">@lang('Email')</label>
             </div>
         </div>
 
         <div class="form-group">
             <div class="input-container">
                 <input id="password" name="password" class="input" type="password" required />
-                <label class="label" for="password">@lang('Kata Sandi')</label>
+                <label class="label label-input" for="password">@lang('Kata Sandi')</label>
             </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label>
+                <input type="checkbox" name="remember" value="1"/>
+                Tetap masuk
+            </label>
         </div>
 
         @if ($errors->count())

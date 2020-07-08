@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Classroom;
+use App\MemberMatery;
 use App\MemberProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -32,7 +33,9 @@ class AdminController extends Controller
     public function classroomMember($id)
     {
         $query = MemberProfile::join('classroom_members', 'member_profiles.user_id', '=', 'classroom_members.user_id')
+        ->select('name', 'point', 'exp', 'member_id', 'gender')
         ->where('classroom_members.classroom_id', $id);
+
 
         return datatables()->of($query)->toJson();
     }
@@ -52,5 +55,10 @@ class AdminController extends Controller
         $file = $request->file();
 
         return $file;
+    }
+
+    public function bank(Request $request)
+    {
+        return view('admin.bank.index');
     }
 }

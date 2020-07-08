@@ -12,8 +12,8 @@
         <a href="/">
             <img src="/home/img/logo.png"/>
         </a>
-        <h1>Selamat Datang di Alhimmah Media</h1>
-        @lang('Alhimmah media bisa diakses kapan saja melalui perangkat komputer atau handphone').
+        <h1>Selamat Datang di madinah.id Media</h1>
+        @lang('madinah.id media bisa diakses kapan saja melalui perangkat komputer atau handphone').
     </div>
     @yield('content')
 </div>

@@ -19,7 +19,7 @@
                                 dengan adanya madinah.id ana bisa belajar agama di rumah apalagi di masa pandemi seperti ini.
 
                             </p>
-                            <span>- Agun Buhori</span>
+                            <span>- Albantany</span>
                         </div>
                     </div>
                 </div>

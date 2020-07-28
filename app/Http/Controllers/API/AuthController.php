@@ -50,12 +50,9 @@ class AuthController extends Controller
         $token->save();
         
         return [
-            'status' => 200,
-            'message' => 'Login success',
-            'data' => [
-                'access_token' => $tokenResult->accessToken,
-                'expires_at' => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
-            ]
+            'user' => $user,
+            'access_token' => $tokenResult->accessToken,
+            'expires_at' => Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
         ];
     }
 

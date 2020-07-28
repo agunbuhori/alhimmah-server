@@ -4,12 +4,10 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Matery extends Model implements HasMedia
+class Matery extends Model
 {
-    use SoftDeletes, InteractsWithMedia;
+    use SoftDeletes;
     protected $fillable = ['course_id', 'title', 'video_url', 'duration', 'audio_url', 'article_url', 'article'];
     protected $hidden = ['course_id'];
 

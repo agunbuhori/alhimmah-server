@@ -2,8 +2,6 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use UniSharp\LaravelFilemanager\Lfm;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -40,9 +38,6 @@ Route::group(['middleware' => ['auth', 'role:superadmin'], 'prefix' => 'admin'],
 
     Route::group(['prefix' => 'data'], function () {
         Route::resource('user', 'UserController');
-    });
-    Route::group(['prefix' => 'filemanager'], function() {
-        Lfm::routes();
     });
 });
 

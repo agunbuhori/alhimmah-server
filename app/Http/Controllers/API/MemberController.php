@@ -390,6 +390,11 @@ class MemberController extends Controller
     {
         $user = $request->user();
 
+        $check = ClassroomMember::where(['user_id' => $user->id, 'classroom_id' => $request->classroom_id])->count();
+
+        if ($check)
+            return ['limited' => true];
+
         $classroom_member = new ClassroomMember;
         $classroom_member->user_id = $user->id;
         $classroom_member->classroom_id = $request->classroom_id;

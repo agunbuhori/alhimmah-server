@@ -39,6 +39,10 @@ Route::group(['middleware' => ['auth', 'role:superadmin'], 'prefix' => 'admin'],
     Route::group(['prefix' => 'data'], function () {
         Route::resource('user', 'UserController');
     });
+
+    Route::group(['prefix' => 'filemanager', 'middleware' => ['web', 'auth']], function () {
+        \UniSharp\LaravelFilemanager\Lfm::routes();
+    });
 });
 
 
